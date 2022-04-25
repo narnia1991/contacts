@@ -13,7 +13,7 @@ describe("Test Button Component", () => {
     render(<IButton text="lowercase" onClick={mockFn} />);
     const button = screen.getByRole("button");
     button.click();
-    expect(mockFn).toHaveBeenCalled();
+    expect(mockFn).toBeCalled();
     expect(mockFn).toBeCalledTimes(1);
   });
 });
