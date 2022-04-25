@@ -1,7 +1,6 @@
 import { ThemeProvider } from "@mui/styles";
 import { createTheme, ThemeOptions } from "@mui/system";
-import IButton from "./components/common/button/Button";
-import IInput from "./components/common/textInput/TextInput";
+import ContactForm from "./components/pages/ContactForm";
 import { primary } from "./variables";
 
 export const themeOptions: ThemeOptions = {
@@ -12,6 +11,7 @@ export const themeOptions: ThemeOptions = {
       main: primary,
     },
   },
+  shadows: Array(25).fill("none"),
 };
 
 const theme = createTheme(themeOptions);
@@ -19,10 +19,7 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <div className="App">
-        <IButton text="Click me" />
-        <IInput name="name" value="value" label="label" error="Invalid Input" />
-      </div>
+      <ContactForm />
     </ThemeProvider>
   );
 };
