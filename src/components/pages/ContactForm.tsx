@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,6 +6,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import IButton from "../common/button/Button";
 import IForm from "../common/form/Form";
 import IInput from "../common/input/Input";
+import DiscardChangesModal from "./modals/DiscardChangesModal";
+import { To, useNavigate } from "react-router-dom";
+import { Box } from "@mui/system";
+import { BackspaceOutlined } from "@mui/icons-material";
 
 const nameRegex = /[a-zA-Z\xC0-\uFFFF]/;
 
@@ -35,21 +39,52 @@ export const Schema = yup.object({
 
 type Props = {
   onSubmit(data: FieldValues): void;
+  backUrl?: To;
 };
 
-const ContactForm: FC<Props> = ({ onSubmit }) => {
+const ContactForm: FC<Props> = ({ backUrl, onSubmit }) => {
+  const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
+  const navigate = useNavigate();
+
   const methods = useForm<IFormInputs>({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: yupResolver(Schema),
   });
 
+  const handleModalClose = useCallback(() => {
+    setIsDiscardModalOpen(false);
+  }, []);
+
+  const handleBackClick = () => {
+    if (Object.values(methods.formState.dirtyFields).length) {
+      setIsDiscardModalOpen(true);
+    } else {
+      if (backUrl) {
+        navigate(backUrl, { replace: true });
+      }
+    }
+  };
+
   useEffect(() => {
-    return methods.reset();
+    return () => {
+      methods.reset();
+    };
   }, []);
 
   return (
     <FormProvider {...methods}>
+      <DiscardChangesModal
+        isOpen={isDiscardModalOpen}
+        onClose={handleModalClose}
+      />
+      <Box sx={{ cursor: "pointer" }} onClick={handleBackClick}>
+        <BackspaceOutlined
+          className="text-slate-400"
+          sx={{ "&:hover": { color: "#000" } }}
+        />
+      </Box>
+
       <IForm onSubmit={onSubmit}>
         <IInput name="firstName" label="First Name" />
         <IInput name="lastName" label="Last Name" />

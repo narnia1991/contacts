@@ -29,7 +29,11 @@ const ContactList: FC = () => {
   const contactsCollectionRef = collection(db, "contacts");
 
   const checkHasMore = useCallback(() => {
-    if (lastVisible && lastDocument && lastVisible?.id === lastDocument?.id) {
+    if (
+      !!lastVisible &&
+      !!lastDocument &&
+      lastVisible?.id === lastDocument?.id
+    ) {
       setHasMore(false);
     }
   }, []);
@@ -110,9 +114,8 @@ const ContactList: FC = () => {
       <InfiniteScroll
         pageStart={0}
         loadMore={loadMore}
-        hasMore={true || false}
         loader={
-          hasMore && (
+          !!hasMore && (
             <Paper
               variant="outlined"
               className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
@@ -122,7 +125,7 @@ const ContactList: FC = () => {
           )
         }
       >
-        {contacts ? (
+        {!!contacts ? (
           contacts.map((entry: Contact) => (
             <Paper
               key={`${entry.firstName}${entry.contact}`}
@@ -182,6 +185,7 @@ const ContactList: FC = () => {
           ))
         ) : (
           <Paper
+            key="noRecord"
             variant="outlined"
             className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
           >

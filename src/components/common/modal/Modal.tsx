@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 
 const styles = {
   overlay: {
-    backgroundColor: "#00223350",
+    backgroundColor: "#00223399",
     zIndex: 10,
   },
   content: {

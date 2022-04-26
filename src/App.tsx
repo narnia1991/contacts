@@ -4,6 +4,7 @@ import { createTheme, ThemeOptions } from "@mui/system";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AddContact from "./components/pages/AddContact";
 import ContactList from "./components/pages/ContactList";
+import Todo from "./components/pages/Todo";
 import Populate from "./seed/Populate";
 import { primary } from "./variables";
 
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/populate" element={<Populate />} />
             <Route path="/add" element={<AddContact />} />
             <Route path="/" element={<ContactList />} />
+            <Route path="/todo" element={<Todo />} />
           </Routes>
         </BrowserRouter>
       </Paper>
