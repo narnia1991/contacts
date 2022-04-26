@@ -1,11 +1,6 @@
 import { TextField } from "@mui/material";
 import { FC } from "react";
-import {
-  Control,
-  Controller,
-  FieldValues,
-  useFormContext,
-} from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 type Props = {
   defaultValue?: string;

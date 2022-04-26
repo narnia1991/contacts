@@ -1,10 +1,4 @@
-import {
-  act,
-  fireEvent,
-  queryByTestId,
-  render,
-  screen,
-} from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import ContactForm from "../ContactForm";
 
 describe("Testing Contact Form", () => {

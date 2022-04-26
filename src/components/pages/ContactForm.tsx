@@ -7,7 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import IButton from "../common/button/Button";
 import IForm from "../common/form/Form";
 import IInput from "../common/input/Input";
-import { string } from "yup/lib/locale";
 
 const nameRegex = /[a-zA-Z\xC0-\uFFFF]/;
 
@@ -47,7 +46,7 @@ const ContactForm: FC = () => {
   }, []);
 
   return (
-    <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center	">
+    <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
       <FormProvider {...methods}>
         <IForm onSubmit={submitForm}>
           <IInput name="firstName" label="First Name" />

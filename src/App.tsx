@@ -1,3 +1,4 @@
+import { Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/styles";
 import { createTheme, ThemeOptions } from "@mui/system";
 import ContactForm from "./components/pages/ContactForm";
@@ -21,7 +22,9 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <ContactList />
+      <Paper className="bg-sky-800 m-0 p-4 rounded-none">
+        <ContactList />
+      </Paper>
     </ThemeProvider>
   );
 };
