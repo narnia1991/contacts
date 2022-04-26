@@ -37,6 +37,7 @@ const Modal: FC<Props> = ({
       isOpen={isOpen}
       onRequestClose={onClose}
       style={styles}
+      ariaHideApp={false}
       shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
     >
       {children}

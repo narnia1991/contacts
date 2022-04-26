@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   doc,
   documentId,
@@ -8,35 +7,42 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-import ContactForm, { IFormInputs } from "./ContactForm";
+import ContactForm from "./ContactForm";
 import { db } from "../../firebase";
 import { contactToData, dataToContacts, generateKeywords } from "../helpers";
 import SuccessModal from "./modals/SuccessModal";
-import { BackspaceOutlined } from "@mui/icons-material";
-import { Box } from "@mui/system";
 import { Paper } from "@mui/material";
-import { Link } from "react-router-dom";
 import NoRecords from "./NoRecords";
 import { Contact } from "../types";
+import DeleteContactModal from "./modals/DeleteContactModal";
 
 const EditContact: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] =
+    useState(false);
   const [contact, setContact] = useState<Contact>();
   const contactsRef = collection(db, "contacts");
+  const navigate = useNavigate();
+
+  const route = window.location.pathname.split("/");
+  const id = route[1];
 
   useEffect(() => {
-    const route = window.location.pathname.split("/");
-    const id = route[1];
-    if (!id || route[2] !== "edit") {
+    if (!id || (route[2] !== "edit" && route[2] !== "delete")) {
       return;
+    }
+
+    if (id && route[2] === "delete") {
+      setIsDeleteContactModalOpen(true);
     }
 
     const loadContact = async () => {
       const data = await getDocs(
-        query(collection(db, "contacts"), where(documentId(), "==", id))
+        query(contactsRef, where(documentId(), "==", id))
       );
       setContact({ ...dataToContacts(data.docs[0].data(), data.docs[0].id) });
     };
@@ -68,12 +74,17 @@ const EditContact: FC = () => {
 
   return (
     <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
+      <DeleteContactModal
+        isOpen={isDeleteContactModalOpen}
+        onClose={() => navigate(-1)}
+      />
       <SuccessModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
         to="/"
         message="Contact updated successfuly!"
       />
+
       {contact ? (
         <ContactForm
           onSubmit={handleFormSubmit}

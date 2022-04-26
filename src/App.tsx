@@ -33,6 +33,7 @@ const App = () => {
             <Route path="/" element={<ContactList />} />
             <Route path="/todo" element={<Todo />} />
             <Route path="/:dataId/edit" element={<EditContact />} />
+            <Route path="/:dataId/delete" element={<EditContact />} />
           </Routes>
         </BrowserRouter>
       </Paper>

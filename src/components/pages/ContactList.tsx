@@ -167,15 +167,18 @@ const ContactList: FC = () => {
                         }}
                       />
                     </Link>
-                    <DeleteOutline
-                      className="text-slate-400"
-                      sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                          color: "#F00",
-                        },
-                      }}
-                    />
+
+                    <Link to={`/${entry.id}/delete`}>
+                      <DeleteOutline
+                        className="text-slate-400"
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": {
+                            color: "#F00",
+                          },
+                        }}
+                      />
+                    </Link>
                   </div>
                   <div className="font-bold">
                     {entry.firstName} {entry?.lastName}
