@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { Box, Grid, Paper } from "@mui/material";
+import { Link } from "react-router-dom";
 import {
   collection,
   DocumentData,
@@ -11,13 +12,12 @@ import {
   startAfter,
 } from "firebase/firestore";
 import InfiniteScroll from "react-infinite-scroller";
+import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 
 import { db } from "../../firebase";
 import { dataToContacts, randomizeBg } from "../helpers";
 import { Contact } from "../types";
 import IButton from "../common/button/Button";
-import { DeleteOutline, EditOutlined } from "@mui/icons-material";
-import { Link } from "react-router-dom";
 
 const ContactList: FC = () => {
   const [contacts, setContacts] = useState<Array<Contact>>([]);
@@ -156,15 +156,17 @@ const ContactList: FC = () => {
 
                 <Grid item xs={10}>
                   <div className="flex justify-end">
-                    <EditOutlined
-                      className="text-slate-400"
-                      sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                          color: "#00F",
-                        },
-                      }}
-                    />
+                    <Link to={`/${entry.id}/edit`}>
+                      <EditOutlined
+                        className="text-slate-400"
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": {
+                            color: "#00F",
+                          },
+                        }}
+                      />
+                    </Link>
                     <DeleteOutline
                       className="text-slate-400"
                       sx={{

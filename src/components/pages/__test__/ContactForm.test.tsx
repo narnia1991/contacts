@@ -3,13 +3,15 @@ import ContactForm from "../ContactForm";
 
 describe("Testing Contact Form", () => {
   test("should render the fields", () => {
-    render(<ContactForm onSubmit={jest.fn} />);
+    render(<ContactForm onSubmit={jest.fn} buttonText="Create Contact" />);
     const inputs = screen.getAllByRole("textbox");
     expect(inputs.length).toBe(3);
   });
 
   test("should display if the field has errors", async () => {
-    const { container, getByText } = render(<ContactForm onSubmit={jest.fn} />);
+    const { container, getByText } = render(
+      <ContactForm onSubmit={jest.fn} buttonText="Create Contact" />
+    );
 
     await act(async () => {
       fireEvent.submit(container.querySelector("form") as HTMLFormElement);

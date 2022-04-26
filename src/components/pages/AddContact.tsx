@@ -1,15 +1,12 @@
 import { addDoc, collection } from "firebase/firestore";
-import { FC, useCallback, useState } from "react";
+import { FC, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 import ContactForm from "./ContactForm";
 import { db } from "../../firebase";
 import { contactToData, generateKeywords } from "../helpers";
-import AddContactModal from "./modals/AddContactModal";
-import { BackspaceOutlined } from "@mui/icons-material";
-import { Box } from "@mui/system";
+import SuccessModal from "./modals/SuccessModal";
 import { Paper } from "@mui/material";
-import { Link } from "react-router-dom";
 
 const AddContact: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,8 +34,17 @@ const AddContact: FC = () => {
 
   return (
     <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
-      <AddContactModal isOpen={isModalOpen} onClose={handleModalClose} />
-      <ContactForm onSubmit={handleFormSubmit} backUrl={"/"} />
+      <SuccessModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        to="/"
+        message="Contact saved successfuly!"
+      />
+      <ContactForm
+        onSubmit={handleFormSubmit}
+        backUrl={"/"}
+        buttonText="Create Contact"
+      />
     </Paper>
   );
 };

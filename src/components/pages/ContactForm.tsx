@@ -10,6 +10,7 @@ import DiscardChangesModal from "./modals/DiscardChangesModal";
 import { To, useNavigate } from "react-router-dom";
 import { Box } from "@mui/system";
 import { BackspaceOutlined } from "@mui/icons-material";
+import { Contact } from "../types";
 
 const nameRegex = /[a-zA-Z\xC0-\uFFFF]/;
 
@@ -19,6 +20,8 @@ export interface IFormInputs {
   firstName: string;
   lastName?: string;
   contact: string;
+  email: string;
+  note: string;
 }
 
 export const Schema = yup.object({
@@ -40,9 +43,16 @@ export const Schema = yup.object({
 type Props = {
   onSubmit(data: FieldValues): void;
   backUrl?: To;
+  initialValues?: Contact;
+  buttonText: string;
 };
 
-const ContactForm: FC<Props> = ({ backUrl, onSubmit }) => {
+const ContactForm: FC<Props> = ({
+  backUrl,
+  buttonText,
+  initialValues,
+  onSubmit,
+}) => {
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -86,12 +96,32 @@ const ContactForm: FC<Props> = ({ backUrl, onSubmit }) => {
       </Box>
 
       <IForm onSubmit={onSubmit}>
-        <IInput name="firstName" label="First Name" />
-        <IInput name="lastName" label="Last Name" />
-        <IInput name="contact" label="Contact"></IInput>
-        <IInput name="email" label="Email"></IInput>
-        <IInput name="note" label="Note"></IInput>
-        <IButton text="Create Contact" type="submit"></IButton>
+        <IInput
+          defaultValue={initialValues?.firstName}
+          name="firstName"
+          label="First Name"
+        />
+        <IInput
+          defaultValue={initialValues?.lastName}
+          name="lastName"
+          label="Last Name"
+        />
+        <IInput
+          defaultValue={initialValues?.contact}
+          name="contact"
+          label="Contact"
+        ></IInput>
+        <IInput
+          defaultValue={initialValues?.email}
+          name="email"
+          label="Email"
+        ></IInput>
+        <IInput
+          defaultValue={initialValues?.note}
+          name="note"
+          label="Note"
+        ></IInput>
+        <IButton text={buttonText} type="submit"></IButton>
       </IForm>
     </FormProvider>
   );
