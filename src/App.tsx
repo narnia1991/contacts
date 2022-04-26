@@ -1,6 +1,8 @@
 import { ThemeProvider } from "@mui/styles";
 import { createTheme, ThemeOptions } from "@mui/system";
 import ContactForm from "./components/pages/ContactForm";
+import ContactList from "./components/pages/ContactList";
+import Populate from "./seed/Populate";
 import { primary } from "./variables";
 
 export const themeOptions: ThemeOptions = {
@@ -19,7 +21,7 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <ContactForm />
+      <ContactList />
     </ThemeProvider>
   );
 };

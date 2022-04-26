@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import IButton from "../common/button/Button";
 import IForm from "../common/form/Form";
 import IInput from "../common/input/Input";
+import { string } from "yup/lib/locale";
 
 const nameRegex = /[a-zA-Z\xC0-\uFFFF]/;
 
@@ -30,6 +31,8 @@ export const Schema = yup.object({
     .max(18, "Please enter valid phone number")
     .matches(numberRegex, "Please enter valid phone number")
     .required("Please input contact number"),
+  email: yup.string().email("Please enter a valid email"),
+  note: yup.string(),
 });
 
 const ContactForm: FC = () => {
@@ -50,6 +53,8 @@ const ContactForm: FC = () => {
           <IInput name="firstName" label="First Name" />
           <IInput name="lastName" label="Last Name" />
           <IInput name="contact" label="Contact"></IInput>
+          <IInput name="email" label="Email"></IInput>
+          <IInput name="note" label="Note"></IInput>
           <IButton text="Create Contact" type="submit"></IButton>
         </IForm>
       </FormProvider>
