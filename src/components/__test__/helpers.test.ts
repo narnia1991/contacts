@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 import { createKeywords, generateKeywords, dataToContacts } from "../helpers";
 
 describe("Testing Helper functions", () => {

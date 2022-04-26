@@ -10,7 +10,6 @@ import { Paper } from "@mui/material";
 
 const AddContact: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isQuitModalOpen, setIsQuitModalOpen] = useState(false);
   const contactsRef = collection(db, "contacts");
 
   const handleFormSubmit = async (data: FieldValues) => {

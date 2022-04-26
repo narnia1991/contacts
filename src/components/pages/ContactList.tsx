@@ -2,7 +2,6 @@ import { FC, RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { Box, Grid, Paper, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
-  collection,
   DocumentData,
   getDocs,
   QueryDocumentSnapshot,
@@ -11,7 +10,6 @@ import {
   DeleteOutline,
   EditOutlined,
   StarOutline,
-  StarOutlined,
   StarTwoTone,
 } from "@mui/icons-material";
 import debounce from "lodash.debounce";
@@ -24,6 +22,10 @@ import {
   searchGetMore,
   searchLast,
   searchQuery,
+  starGetMore,
+  starLast,
+  starQuery,
+  starSearchQuery,
 } from "./queries";
 import { dataToContacts, randomizeBg } from "../helpers";
 import { Contact } from "../types";
@@ -41,6 +43,7 @@ const ContactList: FC = () => {
   const searchRef: RefObject<any> = useRef(null);
 
   const checkHasMore = useCallback(() => {
+    console.log(lastVisible?.id, lastDocument?.id);
     if (
       !!lastVisible &&
       !!lastDocument &&
@@ -50,44 +53,24 @@ const ContactList: FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      const fetchInitialData = async () => {
-        const documentSnapshots = await getDocs(defaultQuery);
-
-        const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
-        setLastVisible(last);
-
-        setContacts(
-          documentSnapshots.docs.map((entry: any) =>
-            dataToContacts(entry.data(), entry.id)
-          )
-        );
-
-        const lastDoc = await getDocs(defaultGetLastDoc);
-
-        setLastDocument(
-          dataToContacts(
-            (lastDoc as any).docs[0].data(),
-            (lastDoc as any).docs[0].id
-          )
-        );
-
-        checkHasMore();
-      };
-
-      fetchInitialData();
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
-
   const loadMore = useCallback(async () => {
     if (lastVisible && hasMore) {
       try {
-        let more = defaultGetMore(lastVisible);
-        if (searchString) {
-          more = searchGetMore(searchString, lastVisible);
+        let more;
+        switch (true) {
+          case isStarActive && !!searchString:
+            more = starSearchQuery(searchString);
+            break;
+          case !!searchString:
+            more = searchGetMore(searchString, lastVisible);
+            break;
+          case isStarActive:
+            more = starGetMore(lastVisible);
+            break;
+
+          default:
+            more = defaultGetMore(lastVisible);
+            break;
         }
 
         const documentSnapshots = await getDocs(more);
@@ -149,6 +132,73 @@ const ContactList: FC = () => {
   const toggleStar = () => {
     setIsStarActive(!isStarActive);
   };
+
+  useEffect(() => {
+    if (isStarActive) {
+      try {
+        const fetchStarredList = async () => {
+          const documentSnapshots = await getDocs(starQuery());
+
+          const last =
+            documentSnapshots.docs[documentSnapshots.docs.length - 1];
+          setLastVisible(last);
+
+          setContacts(
+            documentSnapshots.docs.map((entry: any) =>
+              dataToContacts(entry.data(), entry.id)
+            )
+          );
+
+          const lastDoc = await getDocs(starLast());
+
+          setLastDocument(
+            dataToContacts(
+              (lastDoc as any).docs[0].data(),
+              (lastDoc as any).docs[0].id
+            )
+          );
+
+          checkHasMore();
+        };
+
+        fetchStarredList();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [isStarActive]);
+
+  useEffect(() => {
+    try {
+      const fetchInitialData = async () => {
+        const documentSnapshots = await getDocs(defaultQuery);
+
+        const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+        setLastVisible(last);
+
+        setContacts(
+          documentSnapshots.docs.map((entry: any) =>
+            dataToContacts(entry.data(), entry.id)
+          )
+        );
+
+        const lastDoc = await getDocs(defaultGetLastDoc);
+
+        setLastDocument(
+          dataToContacts(
+            (lastDoc as any).docs[0].data(),
+            (lastDoc as any).docs[0].id
+          )
+        );
+
+        checkHasMore();
+      };
+
+      fetchInitialData();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   return (
     <>
@@ -246,7 +296,16 @@ const ContactList: FC = () => {
                 <div className="font-bold">
                   {entry.firstName} {entry?.lastName}
                 </div>
-                <div>{entry.contact}</div>
+                <Box className="flex justify-between">
+                  {entry.contact}
+                  <Box className="flex justify-end px-4 flex-1">
+                    {entry.isStarred ? (
+                      <StarTwoTone className="text-yellow-400" />
+                    ) : (
+                      <StarOutline />
+                    )}
+                  </Box>
+                </Box>
               </Grid>
             </Grid>
           </Paper>

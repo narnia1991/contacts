@@ -36,7 +36,7 @@ const searchQuery = (search: string) =>
   query(
     contactsCollectionRef,
     orderBy("firstName"),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(10)
   );
 
@@ -44,7 +44,7 @@ const searchLast = (search: string) =>
   query(
     contactsCollectionRef,
     orderBy("firstName", "desc"),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(1)
   );
 
@@ -56,7 +56,7 @@ const searchGetMore = (
     contactsCollectionRef,
     orderBy("firstName"),
     startAfter(lastVisible),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(10)
   );
 
@@ -80,8 +80,8 @@ const starGetMore = (lastVisible: QueryDocumentSnapshot<DocumentData>) =>
   query(
     contactsCollectionRef,
     orderBy("firstName"),
-    startAfter(lastVisible),
     where("isStarred", "==", true),
+    startAfter(lastVisible),
     limit(10)
   );
 
@@ -90,7 +90,7 @@ const starSearchQuery = (search: string) =>
     contactsCollectionRef,
     orderBy("firstName"),
     where("isStarred", "==", true),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(10)
   );
 
@@ -99,7 +99,7 @@ const starSearchLast = (search: string) =>
     contactsCollectionRef,
     orderBy("firstName", "desc"),
     where("isStarred", "==", true),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(1)
   );
 
@@ -112,7 +112,7 @@ const starSearchGetMore = (
     orderBy("firstName"),
     startAfter(lastVisible),
     where("isStarred", "==", true),
-    where("keywords", "array-contains", search),
+    where("keywords", "array-contains", search.toLowerCase()),
     limit(10)
   );
 

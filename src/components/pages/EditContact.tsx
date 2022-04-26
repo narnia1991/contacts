@@ -33,7 +33,6 @@ const EditContact: FC = () => {
 
   useEffect(() => {
     if (!id || (route[2] !== "edit" && route[2] !== "delete")) {
-      console.log("potato");
       return;
     }
 

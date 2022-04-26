@@ -25,16 +25,18 @@ export const generateKeywords = (fullName: Array<string>) => {
 export const dataToContacts = (
   { firstName, lastName, avatar, email, contact, note, isStarred }: any,
   id: string
-): Contact => ({
-  id,
-  firstName,
-  lastName,
-  avatar,
-  email,
-  contact,
-  note,
-  isStarred,
-});
+): Contact => {
+  return {
+    id,
+    firstName: capitalizeEach(firstName),
+    lastName: capitalizeEach(lastName),
+    avatar,
+    email,
+    contact,
+    note,
+    isStarred,
+  };
+};
 
 export const randomizeBg = () => `${
   [
@@ -51,6 +53,18 @@ export const randomizeBg = () => `${
   ][Math.floor(Math.random() * 10)]
 }
 `;
+
+export const capitalizeEach = (word: string) =>
+  word
+    .split(" ")
+    .map((entry) => `${entry[0].toUpperCase()}${entry.substring(1)}`)
+    .join(" ")
+    .split("'")
+    .map((entry) => `${entry[0].toUpperCase()}${entry.substring(1)}`)
+    .join("'")
+    .split("-")
+    .map((entry) => `${entry[0].toUpperCase()}${entry.substring(1)}`)
+    .join("-");
 
 export const contactToData = (formValues: FieldValues) => {
   const newFormData: Record<string, string | boolean> = {

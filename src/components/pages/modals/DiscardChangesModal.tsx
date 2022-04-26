@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 
 import IButton from "../../common/button/Button";
 import Modal from "../../common/modal/Modal";

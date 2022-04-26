@@ -4,8 +4,8 @@ import { generateKeywords } from "../components/helpers";
 export const createDummyData = (count: number) =>
   Array.from(Array(count)).map(() => {
     const data = {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      firstName: faker.name.firstName().toLocaleLowerCase(),
+      lastName: faker.name.lastName().toLocaleLowerCase(),
       avatar: Math.random() > 0.4 ? faker.image.avatar() : "",
       email: faker.internet.email(),
       contact: faker.phone.phoneNumber(),
