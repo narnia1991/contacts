@@ -33,7 +33,7 @@ const IButton: FC<Props> = ({
       size={size || "large"}
       color={color || "primary"}
       onClick={onClick}
-      className="rounded-none my-4"
+      className="rounded-none my-4 mx-2"
       type={type}
       {...props}
     >

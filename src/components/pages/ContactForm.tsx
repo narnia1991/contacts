@@ -1,6 +1,5 @@
-import { FC, useCallback } from "react";
-import { Paper } from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
+import { FC, useEffect } from "react";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -34,30 +33,32 @@ export const Schema = yup.object({
   note: yup.string(),
 });
 
-const ContactForm: FC = () => {
+type Props = {
+  onSubmit(data: FieldValues): void;
+};
+
+const ContactForm: FC<Props> = ({ onSubmit }) => {
   const methods = useForm<IFormInputs>({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: yupResolver(Schema),
   });
 
-  const submitForm = useCallback(() => {
-    console.log("Submit!");
+  useEffect(() => {
+    return methods.reset();
   }, []);
 
   return (
-    <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
-      <FormProvider {...methods}>
-        <IForm onSubmit={submitForm}>
-          <IInput name="firstName" label="First Name" />
-          <IInput name="lastName" label="Last Name" />
-          <IInput name="contact" label="Contact"></IInput>
-          <IInput name="email" label="Email"></IInput>
-          <IInput name="note" label="Note"></IInput>
-          <IButton text="Create Contact" type="submit"></IButton>
-        </IForm>
-      </FormProvider>
-    </Paper>
+    <FormProvider {...methods}>
+      <IForm onSubmit={onSubmit}>
+        <IInput name="firstName" label="First Name" />
+        <IInput name="lastName" label="Last Name" />
+        <IInput name="contact" label="Contact"></IInput>
+        <IInput name="email" label="Email"></IInput>
+        <IInput name="note" label="Note"></IInput>
+        <IButton text="Create Contact" type="submit"></IButton>
+      </IForm>
+    </FormProvider>
   );
 };
 

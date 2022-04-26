@@ -1,9 +1,10 @@
-import { Button } from "@mui/material";
+import { Paper } from "@mui/material";
 import { FC, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
 
 import { db } from "../firebase";
 import { createDummyData } from "./seed";
+import IButton from "../components/common/button/Button";
 
 const Populate: FC = () => {
   const [data, setData] = useState<any>([]);
@@ -30,9 +31,9 @@ const Populate: FC = () => {
   };
 
   return (
-    <>
-      <Button onClick={handleGenerateData}>Generate Data</Button>
-      <Button onClick={handleUploadClick}>Upload Data</Button>
+    <Paper className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex justify-between sticky top-0">
+      <IButton onClick={handleGenerateData} text="Generate Data"></IButton>
+      <IButton onClick={handleUploadClick} text="Upload Data"></IButton>
       <div>
         {data ? (
           data.forEach((entry: any) => (
@@ -49,7 +50,7 @@ const Populate: FC = () => {
           <></>
         )}
       </div>
-    </>
+    </Paper>
   );
 };
 

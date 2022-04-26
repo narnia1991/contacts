@@ -1,7 +1,8 @@
 import { Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/styles";
 import { createTheme, ThemeOptions } from "@mui/system";
-import ContactForm from "./components/pages/ContactForm";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AddContact from "./components/pages/AddContact";
 import ContactList from "./components/pages/ContactList";
 import Populate from "./seed/Populate";
 import { primary } from "./variables";
@@ -22,8 +23,14 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Paper className="bg-sky-800 m-0 p-4 rounded-none">
-        <ContactList />
+      <Paper className="bg-sky-800 m-0 p-4 rounded-none h-screen">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/populate" element={<Populate />} />
+            <Route path="/add" element={<AddContact />} />
+            <Route path="/" element={<ContactList />} />
+          </Routes>
+        </BrowserRouter>
       </Paper>
     </ThemeProvider>
   );

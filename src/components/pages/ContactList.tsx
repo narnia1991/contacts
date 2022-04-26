@@ -17,6 +17,7 @@ import { dataToContacts, randomizeBg } from "../helpers";
 import { Contact } from "../types";
 import IButton from "../common/button/Button";
 import { DeleteOutline, EditOutlined } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const ContactList: FC = () => {
   const [contacts, setContacts] = useState<Array<Contact>>([]);
@@ -93,6 +94,8 @@ const ContactList: FC = () => {
     }
   }, []);
 
+  const handleAddClick = () => {};
+
   return (
     <>
       <Paper
@@ -100,7 +103,9 @@ const ContactList: FC = () => {
         className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex justify-between sticky top-0"
       >
         <div></div>
-        <IButton text="Add" />
+        <Link to="/add">
+          <IButton text="Add" />
+        </Link>
       </Paper>
       <InfiniteScroll
         pageStart={0}
@@ -151,6 +156,7 @@ const ContactList: FC = () => {
                     <EditOutlined
                       className="text-slate-400"
                       sx={{
+                        cursor: "pointer",
                         "&:hover": {
                           color: "#00F",
                         },
@@ -159,6 +165,7 @@ const ContactList: FC = () => {
                     <DeleteOutline
                       className="text-slate-400"
                       sx={{
+                        cursor: "pointer",
                         "&:hover": {
                           color: "#F00",
                         },
