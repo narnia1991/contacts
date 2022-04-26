@@ -7,10 +7,13 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   where,
+  documentId,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const contactsCollectionRef = collection(db, "contacts");
+const getContact = (id: string) =>
+  query(contactsCollectionRef, where(documentId(), "==", id));
 
 const defaultQuery = query(
   contactsCollectionRef,
@@ -120,6 +123,7 @@ export {
   defaultQuery,
   defaultGetLastDoc,
   defaultGetMore,
+  getContact,
   searchQuery,
   searchLast,
   searchGetMore,

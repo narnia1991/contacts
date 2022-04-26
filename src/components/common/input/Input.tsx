@@ -8,6 +8,8 @@ type Props = {
   name: string;
   type?: "email" | "text" | "password" | "number";
   placeholder?: string;
+  readOnly?: boolean;
+  variant?: "outlined" | "standard" | "filled" | undefined;
 };
 
 const IInput: FC<Props> = ({
@@ -16,6 +18,8 @@ const IInput: FC<Props> = ({
   name,
   type = "text",
   placeholder,
+  readOnly = false,
+  variant = "outlined",
 }) => {
   const {
     control,
@@ -31,12 +35,13 @@ const IInput: FC<Props> = ({
           {...field}
           defaultValue={defaultValue}
           type={type}
-          variant="outlined"
+          variant={variant}
           label={label}
           placeholder={placeholder}
           className="rounded-none my-4"
           error={!!errors[name]}
           helperText={errors[name] ? errors[name].message : ""}
+          inputProps={{ readOnly }}
         ></TextField>
       )}
     />

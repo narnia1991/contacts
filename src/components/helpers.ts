@@ -68,12 +68,12 @@ export const capitalizeEach = (word: string) =>
 
 export const contactToData = (formValues: FieldValues) => {
   const newFormData: Record<string, string | boolean> = {
-    firstName: formValues.firstName,
+    firstName: formValues.firstName.toLowerCase(),
     contact: formValues.contact,
   };
 
   if (formValues.lastName) {
-    newFormData.lastName = formValues.lastName;
+    newFormData.lastName = formValues.lastName.toLowerCase();
   }
 
   if (formValues.avatar) {

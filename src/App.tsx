@@ -6,6 +6,7 @@ import AddContact from "./components/pages/AddContact";
 import ContactList from "./components/pages/ContactList";
 import EditContact from "./components/pages/EditContact";
 import Todo from "./components/pages/Todo";
+import ViewContact from "./components/pages/ViewContact";
 import Populate from "./seed/Populate";
 import { primary } from "./variables";
 
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/add" element={<AddContact />} />
             <Route path="/" element={<ContactList />} />
             <Route path="/todo" element={<Todo />} />
+            <Route path="/:dataId" element={<ViewContact />} />
             <Route path="/:dataId/edit" element={<EditContact />} />
             <Route path="/:dataId/delete" element={<EditContact />} />
           </Routes>

@@ -1,10 +1,12 @@
 import { FC, RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { Box, Grid, Paper, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  doc,
   DocumentData,
   getDocs,
   QueryDocumentSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 import {
   DeleteOutline,
@@ -27,9 +29,10 @@ import {
   starQuery,
   starSearchQuery,
 } from "./queries";
-import { dataToContacts, randomizeBg } from "../helpers";
+import { contactToData, dataToContacts, randomizeBg } from "../helpers";
 import { Contact } from "../types";
 import IButton from "../common/button/Button";
+import { db } from "../../firebase";
 
 const ContactList: FC = () => {
   const [contacts, setContacts] = useState<Array<Contact>>([]);
@@ -41,6 +44,7 @@ const ContactList: FC = () => {
   const [isStarActive, setIsStarActive] = useState(false);
 
   const searchRef: RefObject<any> = useRef(null);
+  const navigate = useNavigate();
 
   const checkHasMore = useCallback(() => {
     console.log(lastVisible?.id, lastDocument?.id);
@@ -131,6 +135,35 @@ const ContactList: FC = () => {
 
   const toggleStar = () => {
     setIsStarActive(!isStarActive);
+  };
+
+  const handleCardClick = useCallback((id: string) => {
+    navigate(`/${id}`);
+  }, []);
+
+  const handleCardStarClick = async (e: any, id: string) => {
+    e.stopPropagation();
+    console.log(id);
+
+    const oldDataRef = doc(db, "contacts", id);
+    const contact = contacts.filter((e) => e.id === id)[0];
+    let index = contacts.indexOf(contact);
+    console.log(index);
+    try {
+      await updateDoc(oldDataRef, {
+        ...contactToData(contact),
+        isStarred: !contact.isStarred,
+      });
+
+      setContacts(
+        contacts.splice(index, 1, {
+          ...contact,
+          isStarred: !contact.isStarred,
+        })
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -244,6 +277,7 @@ const ContactList: FC = () => {
             key={`${entry.firstName}${entry.contact}`}
             variant="outlined"
             className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
+            onClick={() => handleCardClick(entry.id)}
           >
             <Grid container spacing={2} sx={{ cursor: "pointer" }}>
               <Grid item xs={2}>
@@ -269,7 +303,10 @@ const ContactList: FC = () => {
 
               <Grid item xs={10}>
                 <div className="flex justify-end">
-                  <Link to={`/${entry.id}/edit`}>
+                  <Link
+                    to={`/${entry.id}/edit`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <EditOutlined
                       className="text-slate-400"
                       sx={{
@@ -281,7 +318,10 @@ const ContactList: FC = () => {
                     />
                   </Link>
 
-                  <Link to={`/${entry.id}/delete`}>
+                  <Link
+                    to={`/${entry.id}/delete`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <DeleteOutline
                       className="text-slate-400"
                       sx={{
@@ -298,7 +338,10 @@ const ContactList: FC = () => {
                 </div>
                 <Box className="flex justify-between">
                   {entry.contact}
-                  <Box className="flex justify-end px-4 flex-1">
+                  <Box
+                    className="flex justify-end px-4 flex-1"
+                    // onClick={(e: any) => handleCardStarClick(e, entry.id)}
+                  >
                     {entry.isStarred ? (
                       <StarTwoTone className="text-yellow-400" />
                     ) : (

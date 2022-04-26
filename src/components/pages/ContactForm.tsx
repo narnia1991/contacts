@@ -44,7 +44,9 @@ type Props = {
   onSubmit(data: FieldValues): void;
   backUrl?: To;
   initialValues?: Contact;
-  buttonText: string;
+  buttonText?: string;
+  readOnly?: boolean;
+  variant?: "outlined" | "standard" | "filled" | undefined;
 };
 
 const ContactForm: FC<Props> = ({
@@ -52,6 +54,8 @@ const ContactForm: FC<Props> = ({
   buttonText,
   initialValues,
   onSubmit,
+  readOnly,
+  variant,
 }) => {
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -100,28 +104,42 @@ const ContactForm: FC<Props> = ({
           defaultValue={initialValues?.firstName}
           name="firstName"
           label="First Name"
+          readOnly={readOnly}
+          variant={variant}
         />
         <IInput
           defaultValue={initialValues?.lastName}
           name="lastName"
           label="Last Name"
+          readOnly={readOnly}
+          variant={variant}
         />
         <IInput
           defaultValue={initialValues?.contact}
           name="contact"
           label="Contact"
+          readOnly={readOnly}
+          variant={variant}
         ></IInput>
         <IInput
           defaultValue={initialValues?.email}
           name="email"
           label="Email"
+          readOnly={readOnly}
+          variant={variant}
         ></IInput>
         <IInput
           defaultValue={initialValues?.note}
           name="note"
           label="Note"
+          readOnly={readOnly}
+          variant={variant}
         ></IInput>
-        <IButton text={buttonText} type="submit"></IButton>
+        {buttonText ? (
+          <IButton text={buttonText} type="submit"></IButton>
+        ) : (
+          <></>
+        )}
       </IForm>
     </FormProvider>
   );
