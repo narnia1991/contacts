@@ -25,7 +25,7 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Paper className="bg-sky-800 m-0 p-4 rounded-none h-screen">
+      <Paper id="container" className="m-0 p-4 rounded-none h-max bg-sky-800">
         <BrowserRouter>
           <Routes>
             <Route path="/populate" element={<Populate />} />

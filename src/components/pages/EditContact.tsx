@@ -33,6 +33,7 @@ const EditContact: FC = () => {
 
   useEffect(() => {
     if (!id || (route[2] !== "edit" && route[2] !== "delete")) {
+      console.log("potato");
       return;
     }
 
@@ -74,10 +75,14 @@ const EditContact: FC = () => {
 
   return (
     <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
-      <DeleteContactModal
-        isOpen={isDeleteContactModalOpen}
-        onClose={() => navigate(-1)}
-      />
+      {!!isDeleteContactModalOpen ? (
+        <DeleteContactModal
+          isOpen={isDeleteContactModalOpen}
+          onClose={() => navigate(-1)}
+        />
+      ) : (
+        <></>
+      )}
       <SuccessModal
         isOpen={isModalOpen}
         onClose={handleModalClose}

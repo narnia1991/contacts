@@ -1,20 +1,30 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import { Box, Grid, Paper } from "@mui/material";
+import { FC, RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { Box, Grid, Paper, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
   collection,
   DocumentData,
   getDocs,
-  limit,
-  orderBy,
-  query,
   QueryDocumentSnapshot,
-  startAfter,
 } from "firebase/firestore";
+import {
+  DeleteOutline,
+  EditOutlined,
+  StarOutline,
+  StarOutlined,
+  StarTwoTone,
+} from "@mui/icons-material";
+import debounce from "lodash.debounce";
 import InfiniteScroll from "react-infinite-scroller";
-import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 
-import { db } from "../../firebase";
+import {
+  defaultGetLastDoc,
+  defaultGetMore,
+  defaultQuery,
+  searchGetMore,
+  searchLast,
+  searchQuery,
+} from "./queries";
 import { dataToContacts, randomizeBg } from "../helpers";
 import { Contact } from "../types";
 import IButton from "../common/button/Button";
@@ -25,8 +35,10 @@ const ContactList: FC = () => {
     useState<QueryDocumentSnapshot<DocumentData>>();
   const [lastDocument, setLastDocument] = useState<Contact>();
   const [hasMore, setHasMore] = useState(true);
+  const [searchString, setSearchString] = useState("");
+  const [isStarActive, setIsStarActive] = useState(false);
 
-  const contactsCollectionRef = collection(db, "contacts");
+  const searchRef: RefObject<any> = useRef(null);
 
   const checkHasMore = useCallback(() => {
     if (
@@ -39,74 +51,125 @@ const ContactList: FC = () => {
   }, []);
 
   useEffect(() => {
-    const first = query(contactsCollectionRef, orderBy("firstName"), limit(10));
-    const fetchInitialData = async () => {
-      const documentSnapshots = await getDocs(first);
+    try {
+      const fetchInitialData = async () => {
+        const documentSnapshots = await getDocs(defaultQuery);
 
-      const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
-      setContacts(
-        documentSnapshots.docs.map((entry: any) =>
-          dataToContacts(entry.data(), entry.id)
-        )
-      );
+        const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+        setLastVisible(last);
 
-      setLastVisible(last);
+        setContacts(
+          documentSnapshots.docs.map((entry: any) =>
+            dataToContacts(entry.data(), entry.id)
+          )
+        );
 
-      const end = query(
-        contactsCollectionRef,
-        orderBy("firstName", "desc"),
-        limit(1)
-      );
-      const lastDoc = await getDocs(end);
+        const lastDoc = await getDocs(defaultGetLastDoc);
 
-      setLastDocument(
-        dataToContacts(
-          (lastDoc as any).docs[0].data(),
-          (lastDoc as any).docs[0].id
-        )
-      );
+        setLastDocument(
+          dataToContacts(
+            (lastDoc as any).docs[0].data(),
+            (lastDoc as any).docs[0].id
+          )
+        );
 
-      checkHasMore();
-    };
+        checkHasMore();
+      };
 
-    fetchInitialData();
+      fetchInitialData();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   const loadMore = useCallback(async () => {
     if (lastVisible && hasMore) {
-      const more = query(
-        contactsCollectionRef,
-        orderBy("firstName"),
-        startAfter(lastVisible),
-        limit(10)
-      );
-      const documentSnapshots = await getDocs(more);
+      try {
+        let more = defaultGetMore(lastVisible);
+        if (searchString) {
+          more = searchGetMore(searchString, lastVisible);
+        }
 
-      const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+        const documentSnapshots = await getDocs(more);
 
-      const newArr = [
-        ...contacts,
-        ...documentSnapshots.docs.map((entry: any) =>
-          dataToContacts(entry.data(), entry.id)
-        ),
-      ];
+        const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
 
-      setContacts(newArr);
-      setLastVisible(last);
+        const newArr = [
+          ...contacts,
+          ...documentSnapshots.docs.map((entry: any) =>
+            dataToContacts(entry.data(), entry.id)
+          ),
+        ];
 
-      checkHasMore();
+        setContacts(newArr);
+        setLastVisible(last);
+
+        checkHasMore();
+      } catch (err) {
+        console.log(err);
+      }
     }
-  }, []);
+  }, [lastVisible, hasMore]);
 
-  const handleAddClick = () => {};
+  const search = debounce(() => {
+    const searchString = searchRef.current.value;
+    setSearchString(searchString);
+
+    try {
+      const fetchInitialData = async () => {
+        const documentSnapshots = await getDocs(searchQuery(searchString));
+
+        const last = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+        setLastVisible(last);
+
+        setContacts(
+          documentSnapshots.docs.map((entry: any) =>
+            dataToContacts(entry.data(), entry.id)
+          )
+        );
+
+        const lastDoc = await getDocs(searchLast(searchString));
+
+        setLastDocument(
+          dataToContacts(
+            (lastDoc as any).docs[0].data(),
+            (lastDoc as any).docs[0].id
+          )
+        );
+
+        checkHasMore();
+      };
+
+      fetchInitialData();
+    } catch (err) {
+      console.log(err);
+    }
+  }, 500);
+
+  const toggleStar = () => {
+    setIsStarActive(!isStarActive);
+  };
 
   return (
     <>
       <Paper
         variant="outlined"
-        className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex justify-between sticky top-0"
+        className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex justify-between items-center sticky top-0"
       >
-        <div></div>
+        <TextField
+          name="search"
+          onChange={search}
+          variant="outlined"
+          label="Search"
+          inputRef={searchRef}
+        />
+        <Box className="flex justify-end px-4 flex-1">
+          {isStarActive ? (
+            <StarTwoTone className="text-yellow-400" onClick={toggleStar} />
+          ) : (
+            <StarOutline onClick={toggleStar} />
+          )}
+        </Box>
         <Link to="/add">
           <IButton text="Add" />
         </Link>
@@ -114,89 +177,80 @@ const ContactList: FC = () => {
       <InfiniteScroll
         pageStart={0}
         loadMore={loadMore}
+        hasMore={!!hasMore}
         loader={
           !!hasMore && (
             <Paper
               variant="outlined"
-              className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
+              className="rounded-none my-4 mx-auto p-4 max-w-xl flex"
             >
-              <Box className="font-bold justify-center">...Loading</Box>
+              <Box className="font-bold justify-center">Loading...</Box>
             </Paper>
           )
         }
       >
-        {!!contacts ? (
-          contacts.map((entry: Contact) => (
-            <Paper
-              key={`${entry.firstName}${entry.contact}`}
-              variant="outlined"
-              className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
-            >
-              <Grid container spacing={2} sx={{ cursor: "pointer" }}>
-                <Grid item xs={2}>
-                  {entry.avatar ? (
-                    <img
-                      src={`${entry.avatar}`}
-                      alt={""}
-                      loading="lazy"
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <Box
-                      className="rounded-full h-16 w-16 flex items-center justify-center"
-                      sx={{ backgroundColor: randomizeBg() }}
-                    >
-                      <h1 className="text-white font-bold">
-                        {entry.firstName.charAt(0)}
-                        {entry.lastName?.charAt(0)}
-                      </h1>
-                    </Box>
-                  )}
-                </Grid>
-
-                <Grid item xs={10}>
-                  <div className="flex justify-end">
-                    <Link to={`/${entry.id}/edit`}>
-                      <EditOutlined
-                        className="text-slate-400"
-                        sx={{
-                          cursor: "pointer",
-                          "&:hover": {
-                            color: "#00F",
-                          },
-                        }}
-                      />
-                    </Link>
-
-                    <Link to={`/${entry.id}/delete`}>
-                      <DeleteOutline
-                        className="text-slate-400"
-                        sx={{
-                          cursor: "pointer",
-                          "&:hover": {
-                            color: "#F00",
-                          },
-                        }}
-                      />
-                    </Link>
-                  </div>
-                  <div className="font-bold">
-                    {entry.firstName} {entry?.lastName}
-                  </div>
-                  <div>{entry.contact}</div>
-                </Grid>
-              </Grid>
-            </Paper>
-          ))
-        ) : (
+        {contacts.map((entry: Contact) => (
           <Paper
-            key="noRecord"
+            key={`${entry.firstName}${entry.contact}`}
             variant="outlined"
             className="rounded-none my-4 mx-auto p-4 max-w-xl self-center flex"
           >
-            <Box className="font-bold">No Records Found</Box>
+            <Grid container spacing={2} sx={{ cursor: "pointer" }}>
+              <Grid item xs={2}>
+                {entry.avatar ? (
+                  <img
+                    src={`${entry.avatar}`}
+                    alt={""}
+                    loading="lazy"
+                    className="rounded-full"
+                  />
+                ) : (
+                  <Box
+                    className="rounded-full h-16 w-16 flex items-center justify-center"
+                    sx={{ backgroundColor: randomizeBg() }}
+                  >
+                    <h1 className="text-white font-bold">
+                      {entry.firstName.charAt(0)}
+                      {entry.lastName?.charAt(0)}
+                    </h1>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={10}>
+                <div className="flex justify-end">
+                  <Link to={`/${entry.id}/edit`}>
+                    <EditOutlined
+                      className="text-slate-400"
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: "#00F",
+                        },
+                      }}
+                    />
+                  </Link>
+
+                  <Link to={`/${entry.id}/delete`}>
+                    <DeleteOutline
+                      className="text-slate-400"
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: "#F00",
+                        },
+                      }}
+                    />
+                  </Link>
+                </div>
+                <div className="font-bold">
+                  {entry.firstName} {entry?.lastName}
+                </div>
+                <div>{entry.contact}</div>
+              </Grid>
+            </Grid>
           </Paper>
-        )}
+        ))}
       </InfiniteScroll>
     </>
   );
