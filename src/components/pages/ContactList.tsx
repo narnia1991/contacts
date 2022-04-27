@@ -47,7 +47,6 @@ const ContactList: FC = () => {
   const navigate = useNavigate();
 
   const checkHasMore = useCallback(() => {
-    console.log(lastVisible?.id, lastDocument?.id);
     if (
       !!lastVisible &&
       !!lastDocument &&
@@ -143,12 +142,10 @@ const ContactList: FC = () => {
 
   const handleCardStarClick = async (e: any, id: string) => {
     e.stopPropagation();
-    console.log(id);
 
     const oldDataRef = doc(db, "contacts", id);
     const contact = contacts.filter((e) => e.id === id)[0];
     let index = contacts.indexOf(contact);
-    console.log(index);
     try {
       await updateDoc(oldDataRef, {
         ...contactToData(contact),

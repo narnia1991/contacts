@@ -12,7 +12,6 @@ const Populate: FC = () => {
   const handleGenerateData = () => {
     const dummy = createDummyData(100);
     setData(dummy);
-    console.log(dummy);
 
     const myjson = JSON.stringify(dummy, null, 2);
     const x = window.open();
