@@ -7,7 +7,7 @@ import IButton from "../common/button/Button";
 import IForm from "../common/form/Form";
 import IInput from "../common/input/Input";
 import DiscardChangesModal from "./modals/DiscardChangesModal";
-import { To, useNavigate } from "react-router-dom";
+import { To, useLocation, useNavigate } from "react-router-dom";
 import { Box } from "@mui/system";
 import { BackspaceOutlined } from "@mui/icons-material";
 import { Contact } from "../types";
@@ -64,24 +64,38 @@ const ContactForm: FC<Props> = ({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: yupResolver(Schema),
+    defaultValues: JSON.parse(localStorage.getItem("contact") || "{}"),
   });
 
   const handleModalClose = useCallback(() => {
     setIsDiscardModalOpen(false);
   }, []);
 
+  const removeLocalStore = () => {
+    localStorage.removeItem("contact");
+  };
+
   const handleBackClick = () => {
     if (Object.values(methods.formState.dirtyFields).length) {
       setIsDiscardModalOpen(true);
     } else {
       if (backUrl) {
+        removeLocalStore();
         navigate(backUrl, { replace: true });
       }
     }
   };
 
   useEffect(() => {
+    localStorage.setItem(
+      "contact",
+      JSON.stringify({ ...initialValues, ...methods.getValues() })
+    );
+  }, [methods.watch(["firstName", "lastName", "email", "contact", "note"])]);
+
+  useEffect(() => {
     return () => {
+      removeLocalStore();
       methods.reset();
     };
   }, []);

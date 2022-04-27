@@ -302,7 +302,7 @@ const ContactList: FC = () => {
               </Grid>
 
               <Grid item xs={10}>
-                <div className="flex justify-end">
+                <Box className="flex justify-end">
                   <Link
                     to={`/${entry.id}/edit`}
                     onClick={(e) => e.stopPropagation()}
@@ -332,10 +332,10 @@ const ContactList: FC = () => {
                       }}
                     />
                   </Link>
-                </div>
-                <div className="font-bold">
+                </Box>
+                <Box className="font-bold">
                   {entry.firstName} {entry?.lastName}
-                </div>
+                </Box>
                 <Box className="flex justify-between">
                   {entry.contact}
                   <Box

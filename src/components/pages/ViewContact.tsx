@@ -3,10 +3,12 @@ import { FC, useEffect, useState } from "react";
 
 import ContactForm from "./ContactForm";
 import { dataToContacts } from "../helpers";
-import { Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import NoRecords from "./NoRecords";
 import { Contact } from "../types";
 import { getContact } from "./queries";
+import { DeleteOutline, EditOutlined } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const ViewContact: FC = () => {
   const [contact, setContact] = useState<Contact>();
@@ -29,6 +31,31 @@ const ViewContact: FC = () => {
 
   return (
     <Paper variant="outlined" className="my-4 mx-auto p-4 max-w-xl self-center">
+      <Box className="flex justify-end">
+        <Link to={`/${id}/edit`} onClick={(e) => e.stopPropagation()}>
+          <EditOutlined
+            className="text-slate-400"
+            sx={{
+              cursor: "pointer",
+              "&:hover": {
+                color: "#00F",
+              },
+            }}
+          />
+        </Link>
+
+        <Link to={`/${id}/delete`} onClick={(e) => e.stopPropagation()}>
+          <DeleteOutline
+            className="text-slate-400"
+            sx={{
+              cursor: "pointer",
+              "&:hover": {
+                color: "#F00",
+              },
+            }}
+          />
+        </Link>
+      </Box>
       {contact ? (
         <ContactForm
           onSubmit={() => {}}

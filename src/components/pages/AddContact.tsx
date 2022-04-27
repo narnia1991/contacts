@@ -1,5 +1,5 @@
 import { addDoc, collection } from "firebase/firestore";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 
 import ContactForm from "./ContactForm";
