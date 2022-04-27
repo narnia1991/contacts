@@ -1,4 +1,4 @@
-import { Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { ThemeProvider } from "@mui/styles";
 import { createTheme, ThemeOptions } from "@mui/system";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -26,7 +26,7 @@ const theme = createTheme(themeOptions);
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Paper className="m-0 p-4 rounded-none h-max bg-sky-800">
+      <Box className="m-0 p-4 rounded-none h-max bg-sky-800">
         <BrowserRouter>
           <Routes>
             <Route path="/populate" element={<Populate />} />
@@ -38,7 +38,7 @@ const App = () => {
             <Route path="/:dataId/delete" element={<EditContact />} />
           </Routes>
         </BrowserRouter>
-      </Paper>
+      </Box>
     </ThemeProvider>
   );
 };
